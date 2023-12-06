@@ -2,6 +2,8 @@ const express = require('express')
 const fetch  = require('node-fetch')
 const morgan = require('morgan')
 
+const { obtainAvailableSeats, obtainCoachWithRequiredSeatsNumber } = require('./domainFunction')
+
 const port = 8083
 
 const app = express()
@@ -22,10 +24,12 @@ app.post("/reserve", async (req, res) => {
   const train = await response.json()
   const seatsInTrain = Object.values(train.seats)
 
-  // TODO: do not hard-code coach number
-  const availableSeats = seatsInTrain.filter(s => s.coach === "A").filter(s => !s.booking_reference)
+  // Step 3: find available seats
+  const availableSeats = obtainAvailableSeats(seatsInTrain);
+
   // Step 4: make reservation
-  const toReserve = availableSeats.slice(0, seatCount)
+  const toReserve = obtainCoachWithRequiredSeatsNumber(availableSeats, seatCount)
+  console.log(toReserve)
   const seatIds = toReserve.map(s => `${s.seat_number}${s.coach}`)
   const reservation = {
     booking_reference: bookingReference,
