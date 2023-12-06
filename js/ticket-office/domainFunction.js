@@ -15,9 +15,10 @@ const obtainAvailableSeats = (seatsInTrain) => {
 }
 
 const obtainCoachWithRequiredSeatsNumber = (availableSeats, seatCount) => {
-    let coach = null;
+    console.log(availableSeats);
+    let coach;
     Object.keys(availableSeats).forEach(key => {
-        if (availableSeats[key].length >= seatCount) {
+        if (availableSeats[key].length >= seatCount && !coach) { 
             coach = key;
         }
     })

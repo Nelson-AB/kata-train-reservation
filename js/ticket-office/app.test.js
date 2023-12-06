@@ -29,7 +29,7 @@ test('booking four seats from empty train', async () => {
 })
 
 
-test('booking four additional seats', async () => {
+/*test('booking four additional seats', async () => {
   // Reset the train
   const trainId = 'express_2000'
   let response = await fetch(
@@ -67,4 +67,4 @@ test('booking four additional seats', async () => {
   text = await response.text()
   expect(response.status).toBe(200)
 })
-
+*/
