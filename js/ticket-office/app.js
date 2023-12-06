@@ -2,7 +2,7 @@ const express = require('express')
 const fetch  = require('node-fetch')
 const morgan = require('morgan')
 
-const { obtainAvailableSeats, obtainCoachWithRequiredSeatsNumber } = require('./domainFunction')
+const { obtainAvailableSeats, obtainCoachWithRequiredSeatsNumber, isTrainLessThan70, isCoachLessThan70, isOneCoachWithoutExceeding70AfterBooking } = require('./domainFunction')
 
 const port = 8083
 
@@ -27,9 +27,21 @@ app.post("/reserve", async (req, res) => {
   // Step 3: find available seats
   const availableSeats = obtainAvailableSeats(seatsInTrain);
 
+  // Step 3.5: check if there are less than 70% of seats reserved
+  if (!isTrainLessThan70(seatsInTrain)) {
+    res.status(500)
+    res.send("Train is full")
+    return
+  }
+  else if (!isOneCoachWithoutExceeding70AfterBooking(seatsInTrain, seatCount)) {
+    res.status(500)
+    res.send("Coach is full")
+    return
+  }
+  
+
   // Step 4: make reservation
   const toReserve = obtainCoachWithRequiredSeatsNumber(availableSeats, seatCount)
-  console.log(toReserve)
   const seatIds = toReserve.map(s => `${s.seat_number}${s.coach}`)
   const reservation = {
     booking_reference: bookingReference,
