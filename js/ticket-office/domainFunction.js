@@ -1,13 +1,13 @@
 const obtainAvailableSeats = (seatsInTrain) => {
-    const availableSeats = new Map();
+    const availableSeats = {};
     seatsInTrain.forEach(s => {
         if (!s.booking_reference){
-            if (!availableSeats.has(s.coach)) {
-                availableSeats.set(s.coach, []);
-                availableSeats.get(s.coach).push({coach:s.coach, seat_number:s.seat_number, booking_reference:s.booking_reference});
+            if (!availableSeats[s.coach]) {
+                availableSeats[s.coach] = [];
+                availableSeats[s.coach].push({coach:s.coach, seat_number:s.seat_number, booking_reference:s.booking_reference});
             }
             else {
-                availableSeats.get(s.coach).push({coach:s.coach, seat_number:s.seat_number, booking_reference:s.booking_reference});
+                availableSeats[s.coach].push({coach:s.coach, seat_number:s.seat_number, booking_reference:s.booking_reference});
             }
         }
     })
@@ -16,12 +16,12 @@ const obtainAvailableSeats = (seatsInTrain) => {
 
 const obtainCoachWithRequiredSeatsNumber = (availableSeats, seatCount) => {
     let coach = null;
-    availableSeats.forEach((value, key) => {
-        if (value.length >= seatCount) {
+    Object.keys(availableSeats).forEach(key => {
+        if (availableSeats[key].length >= seatCount) {
             coach = key;
         }
     })
-    return availableSeats.get(coach).splice(0, seatCount);
+    return availableSeats[coach].splice(0, seatCount);
 }
 
 module.exports = { obtainAvailableSeats, obtainCoachWithRequiredSeatsNumber }
